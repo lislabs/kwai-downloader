@@ -1,110 +1,68 @@
 <script setup lang="ts">
+const videoLink = ref('')
+
 const { data: page } = await useAsyncData('index', () => queryContent('/').findOne())
+
 if (!page.value) {
   throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 }
 
+const pasteFromClipboard = () => {
+  navigator.clipboard.readText().then((text) => {
+    videoLink.value = text
+  }).catch((err) => {
+    console.error('Failed to read clipboard contents: ', err)
+  })
+}
+
 useSeoMeta({
-  titleTemplate: '',
-  title: page.value.title,
-  ogTitle: page.value.title,
-  description: page.value.description,
-  ogDescription: page.value.description
+  ogTitle: 'Kwai Video Downloader',
+  description: 'Kwai Video Downloader is a tool that allows you to download videos from Kwai.',
+  ogDescription: 'Kwai Video Downloader is a tool that allows you to download videos from Kwai.'
 })
 </script>
 
 <template>
   <div v-if="page">
-    <ULandingHero
-      :title="page.hero.title"
-      :description="page.hero.description"
-      :links="page.hero.links"
-    >
-      <div class="absolute inset-0 landing-grid z-[-1] [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]" />
+    <div class="absolute inset-0 landing-grid z-[-1] [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]" />
 
-      <template #headline>
-        <UBadge
-          v-if="page.hero.headline"
-          variant="subtle"
-          size="lg"
-          class="relative rounded-full font-semibold"
-        >
-          <NuxtLink
-            :to="page.hero.headline.to"
-            target="_blank"
-            class="focus:outline-none"
-            tabindex="-1"
-          >
-            <span
-              class="absolute inset-0"
-              aria-hidden="true"
-            />
-          </NuxtLink>
-
-          {{ page.hero.headline.label }}
-
-          <UIcon
-            v-if="page.hero.headline.icon"
-            :name="page.hero.headline.icon"
-            class="ml-1 w-4 h-4 pointer-events-none"
-          />
-        </UBadge>
-      </template>
-    </ULandingHero>
-
-    <ULandingSection class="!pt-0">
-      <ImagePlaceholder />
-    </ULandingSection>
-
-    <ULandingSection
-      v-for="(section, index) in page.sections"
-      :key="index"
-      :title="section.title"
-      :description="section.description"
-      :align="section.align"
-      :features="section.features"
-    >
-      <ImagePlaceholder />
-    </ULandingSection>
-
-    <ULandingSection
-      :title="page.features.title"
-      :description="page.features.description"
-    >
-      <UPageGrid>
-        <ULandingCard
-          v-for="(item, index) in page.features.items"
-          :key="index"
-          v-bind="item"
+    <div class="flex flex-col items-center justify-center text-center mt-20 mx-6">
+      <h1 class="text-4xl font-black">
+        Online Kwai Video Downloader
+      </h1>
+      <h2 class="text-xl text-gray-500 dark:text-gray-400 mt-4">
+        Fast, free, and high-quality. Easy to save videos from Kwai App. Without any watermark.
+      </h2>
+      <div class="flex items-center justify-center mt-8 gap-2.5">
+        <UInput
+          v-model="videoLink"
+          color="white"
+          variant="outline"
+          placeholder="Paste Kwai video link here"
+          icon="i-heroicons-link"
+          size="xl"
         />
-      </UPageGrid>
-    </ULandingSection>
+        <UButton
+          color="white"
+          icon="i-heroicons-clipboard"
+          size="xl"
+          @click="pasteFromClipboard"
+        />
+        <UButton
+          color="white"
+          label="Download"
+          icon="i-heroicons-arrow-down-tray-solid"
+          size="xl"
+        />
+      </div>
 
-    <ULandingSection
-      :headline="page.testimonials.headline"
-      :title="page.testimonials.title"
-      :description="page.testimonials.description"
-    >
-      <UPageColumns class="xl:columns-4">
-        <div
-          v-for="(testimonial, index) in page.testimonials.items"
-          :key="index"
-          class="break-inside-avoid"
-        >
-          <ULandingTestimonial
-            v-bind="testimonial"
-            class="bg-gray-100/50 dark:bg-gray-800/50"
-          />
-        </div>
-      </UPageColumns>
-    </ULandingSection>
-
-    <ULandingSection>
-      <ULandingCTA
-        v-bind="page.cta"
-        class="bg-gray-100/50 dark:bg-gray-800/50"
+      <ULandingFAQ
+        :items="page.faq.items"
+        multiple
+        default-open
+        class="max-w-4xl mx-auto mt-10 text-left"
       />
-    </ULandingSection>
+    </div>
   </div>
 </template>
 

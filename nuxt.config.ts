@@ -10,7 +10,9 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxthq/studio',
     '@vueuse/nuxt',
-    'nuxt-og-image'
+    'nuxt-og-image',
+    '@nuxtjs/i18n',
+    '@nuxtjs/seo'
   ],
 
   hooks: {
